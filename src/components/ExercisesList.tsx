@@ -15,6 +15,7 @@ import {
   FormLabel,
 } from "@contentful/forma-36-react-components";
 import { FieldExtensionSDK } from "contentful-ui-extensions-sdk";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 // import { isConstructSignatureDeclaration } from "typescript";
 // import { findByDisplayValue } from "@testing-library/react";
 
@@ -256,458 +257,378 @@ const ExercisesList = (props: FieldProps) => {
   // console.log(exercises);
   return (
     <section>
-      <div className="exercises">
-        {exercises.map((exercise, index) => {
-          if (exercise.cardio === true) {
-            return (
-              <div className="exercise__item" key={exercise.key}>
-                <Grid className="exercise__item_header" columns={2} rows={1}>
-                  {exercise.name ? (
-                    <Subheading>{exercise.name}</Subheading>
-                  ) : (
-                    <SkeletonContainer svgHeight="20">
-                      <SkeletonBodyText numberOfLines="1"></SkeletonBodyText>
-                    </SkeletonContainer>
-                  )}
-                  <div className="close">
-                    <EditorToolbarButton
-                      icon="Delete"
-                      data-index={index}
-                      onClick={onDeleteButtonClicked}
-                    ></EditorToolbarButton>
-                  </div>
-                </Grid>
-
-                <Grid columns={3}>
-                  {exercise.thumbnail && (
-                    <img
-                      className="vixy-thumb"
-                      alt="Vixy thumbnail"
-                      src={`https://static.cdn.vixyvideo.com/p/380/sp/38000/thumbnail/entry_id/${exercise.thumbnail}`}
-                    />
-                  )}
-                  <div>
-                    <FormLabel>Duration</FormLabel>
-                    <Flex alignItems={"center"}>
-                      <TextInput
-                        value={exercise.duration[0]}
-                        data-durindex={0}
-                        data-index={index}
-                        placeholder={"HH"}
-                        onChange={onDurationChanged}
-                      ></TextInput>
-                      {" : "}
-                      <TextInput
-                        value={exercise.duration[1]}
-                        data-durindex={1}
-                        data-index={index}
-                        placeholder={"MM"}
-                        onChange={onDurationChanged}
-                      ></TextInput>
-                      {" : "}
-                      <TextInput
-                        value={exercise.duration[2]}
-                        data-durindex={2}
-                        data-index={index}
-                        placeholder={"SS"}
-                        onChange={onDurationChanged}
-                      ></TextInput>
-                    </Flex>
-                  </div>
-                </Grid>
-
-                <Grid
-                  columns={3}
-                  columnGap={"spacingM"}
-                  rowGap={"spacingXs"}
-                  className="cardio-container"
-                >
-                  <div>
-                    <FormLabel>Distance</FormLabel>
-                    <TextInput
-                      value={exercise.distance}
-                      data-index={index}
-                      onChange={onDistanceChanged}
-                      placeholder={"Km"}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <FormLabel>Rest</FormLabel>
-                    <TextInput
-                      value={exercise.cardioRest}
-                      data-index={index}
-                      onChange={onCardioRestChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <FormLabel>Kcal</FormLabel>
-                    <TextInput
-                      value={exercise.kcal}
-                      data-index={index}
-                      onChange={onKcalChanged}
-                      placeholder={"Kcal"}
-                    ></TextInput>
-                  </div>
-                </Grid>
-
-                <Grid columns={2} rows={1}>
-                  <div>
-                    <FormLabel>Intensity</FormLabel>
-                    <Select
-                      value={exercise.intensity}
-                      onChange={onIntensityChanged}
-                      data-index={index}
+      <div>
+        <DragDropContext>
+          <Droppable droppableId="items">
+            {(provided) => (
+              <div
+                className="exercises"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {exercises.map((exercise, index) => {
+                  console.log("index", index);
+                  console.log("exercise.id ", exercise.id);
+                  console.log("exercise.key ", exercise.key);
+                  return (
+                    <Draggable
+                      key={exercise.id}
+                      draggableId={exercise.id}
+                      index={index}
                     >
-                      <Option value="1">1</Option>
-                      <Option value="2">2</Option>
-                      <Option value="3">3</Option>
-                      <Option value="4">4</Option>
-                      <Option value="5">5</Option>
-                    </Select>
-                  </div>
-                  <div>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <div>
-                        <FormLabel>Notes</FormLabel>
-                      </div>
-                      <textarea
-                        className="Textarea__Textarea__textarea___30c64 a11y__focus-border--default___60AXp"
-                        value={exercise.note}
-                        data-index={index}
-                        onChange={onNoteChanged}
-                        placeholder="Notes"
-                      />
-                    </div>
-                  </div>
-                </Grid>
-              </div>
-            );
-          } else {
-            return (
-              <div className="exercise__item" key={exercise.key}>
-                <Grid className="exercise__item_header" columns={2} rows={1}>
-                  {exercise.name ? (
-                    <Subheading>{exercise.name}</Subheading>
-                  ) : (
-                    <SkeletonContainer svgHeight="20">
-                      <SkeletonBodyText numberOfLines="1"></SkeletonBodyText>
-                    </SkeletonContainer>
-                  )}
-                  <div className="close">
-                    <EditorToolbarButton
-                      icon="Delete"
-                      data-index={index}
-                      onClick={onDeleteButtonClicked}
-                    ></EditorToolbarButton>
-                  </div>
-                </Grid>
+                      {(provided) => (
+                        <div
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                          className="exercise__item"
+                        >
+                          <Grid
+                            className="exercise__item_header"
+                            columns={2}
+                            rows={1}
+                          >
+                            {exercise.name ? (
+                              <Subheading>{exercise.name}</Subheading>
+                            ) : (
+                              <SkeletonContainer svgHeight="20">
+                                <SkeletonBodyText numberOfLines="1"></SkeletonBodyText>
+                              </SkeletonContainer>
+                            )}
+                            <div className="close">
+                              <EditorToolbarButton
+                                icon="Delete"
+                                data-index={index}
+                                onClick={onDeleteButtonClicked}
+                              ></EditorToolbarButton>
+                            </div>
+                          </Grid>
 
-                <Grid columns={3} rows={1}>
-                  {exercise.thumbnail && (
-                    <img
-                      className="vixy-thumb"
-                      alt="Vixy thumbnail"
-                      src={`https://static.cdn.vixyvideo.com/p/380/sp/38000/thumbnail/entry_id/${exercise.thumbnail}`}
-                    />
-                  )}
+                          <Grid columns={3} rows={1}>
+                            {exercise.thumbnail && (
+                              <img
+                                className="vixy-thumb"
+                                alt="Vixy thumbnail"
+                                src={`https://static.cdn.vixyvideo.com/p/380/sp/38000/thumbnail/entry_id/${exercise.thumbnail}`}
+                              />
+                            )}
 
-                  <Flex>
-                    <FormLabel style={{ display: "flex" }}>
-                      <input
-                        type="checkbox"
-                        className="ControlledInput__ControlledInput___2XK3j"
-                        data-index={index}
-                        checked={exercise.time === true ? `checked` : ""}
-                        value="yes"
-                        onChange={ontimeExerciseChanged}
-                      />
-                      Time based exercise
-                    </FormLabel>
-                  </Flex>
+                            <Flex>
+                              <FormLabel style={{ display: "flex" }}>
+                                <input
+                                  type="checkbox"
+                                  className="ControlledInput__ControlledInput___2XK3j"
+                                  data-index={index}
+                                  checked={
+                                    exercise.time === true ? `checked` : ""
+                                  }
+                                  value="yes"
+                                  onChange={ontimeExerciseChanged}
+                                />
+                                Time based exercise
+                              </FormLabel>
+                            </Flex>
 
-                  {/* <CheckboxField
+                            {/* <CheckboxField
                     type="checkbox"
                     data-index={index}
                     checked={exercise.time === true ? `checked` : ""}
                     value="yes"
                     onChange={ontimeExerciseChanged}
                   /> */}
-                </Grid>
+                          </Grid>
 
-                <Grid
-                  columns={11}
-                  rows={1}
-                  rowGap={"spacingXs"}
-                  columnGap={"spacingXs"}
-                  className={"rep-container"}
-                >
-                  <div>
-                    <Flex flexDirection={"column"} justifyContent={"center"}>
-                      <Paragraph
-                        style={{
-                          marginTop: "30px",
-                          textAlign: "right",
-                        }}
-                      >
-                        Reps{exercise.time === true ? `(s)` : `(x)`}
-                      </Paragraph>
-                    </Flex>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      <Paragraph>1</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[0]}
-                      data-index={index}
-                      data-repindex={0}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      <Paragraph>2</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[1]}
-                      data-index={index}
-                      data-repindex={1}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      {" "}
-                      <Paragraph>3</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[2]}
-                      data-index={index}
-                      data-repindex={2}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      {" "}
-                      <Paragraph>4</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[3]}
-                      data-index={index}
-                      data-repindex={3}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      {" "}
-                      <Paragraph>5</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[4]}
-                      data-index={index}
-                      data-repindex={4}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      {" "}
-                      <Paragraph>6</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[5]}
-                      data-index={index}
-                      data-repindex={5}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      {" "}
-                      <Paragraph>7</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[6]}
-                      data-index={index}
-                      data-repindex={6}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      {" "}
-                      <Paragraph>8</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[7]}
-                      data-index={index}
-                      data-repindex={7}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      {" "}
-                      <Paragraph>9</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[8]}
-                      data-index={index}
-                      data-repindex={8}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <Flex justifyContent={"center"}>
-                      {" "}
-                      <Paragraph>10</Paragraph>
-                    </Flex>
-                    <TextInput
-                      value={exercise.reps[9]}
-                      data-index={index}
-                      data-repindex={9}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
+                          <Grid
+                            columns={11}
+                            rows={1}
+                            rowGap={"spacingXs"}
+                            columnGap={"spacingXs"}
+                            className={"rep-container"}
+                          >
+                            <div>
+                              <Flex
+                                flexDirection={"column"}
+                                justifyContent={"center"}
+                              >
+                                <Paragraph
+                                  style={{
+                                    marginTop: "30px",
+                                    textAlign: "right",
+                                  }}
+                                >
+                                  Reps{exercise.time === true ? `(s)` : `(x)`}
+                                </Paragraph>
+                              </Flex>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                <Paragraph>1</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[0]}
+                                data-index={index}
+                                data-repindex={0}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                <Paragraph>2</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[1]}
+                                data-index={index}
+                                data-repindex={1}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                {" "}
+                                <Paragraph>3</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[2]}
+                                data-index={index}
+                                data-repindex={2}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                {" "}
+                                <Paragraph>4</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[3]}
+                                data-index={index}
+                                data-repindex={3}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                {" "}
+                                <Paragraph>5</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[4]}
+                                data-index={index}
+                                data-repindex={4}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                {" "}
+                                <Paragraph>6</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[5]}
+                                data-index={index}
+                                data-repindex={5}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                {" "}
+                                <Paragraph>7</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[6]}
+                                data-index={index}
+                                data-repindex={6}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                {" "}
+                                <Paragraph>8</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[7]}
+                                data-index={index}
+                                data-repindex={7}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                {" "}
+                                <Paragraph>9</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[8]}
+                                data-index={index}
+                                data-repindex={8}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <Flex justifyContent={"center"}>
+                                {" "}
+                                <Paragraph>10</Paragraph>
+                              </Flex>
+                              <TextInput
+                                value={exercise.reps[9]}
+                                data-index={index}
+                                data-repindex={9}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
 
-                  <div>
-                    <Flex flexDirection={"column"} justifyContent={"center"}>
-                      <Paragraph
-                        style={{
-                          marginTop: "10px",
-                          textAlign: "right",
-                        }}
-                      >
-                        Rest
-                      </Paragraph>
-                    </Flex>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[0]}
-                      data-index={index}
-                      data-restindex={0}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[1]}
-                      data-index={index}
-                      data-restindex={1}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[2]}
-                      data-index={index}
-                      data-restindex={2}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[3]}
-                      data-index={index}
-                      data-restindex={3}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[4]}
-                      data-index={index}
-                      data-restindex={4}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[5]}
-                      data-index={index}
-                      data-restindex={5}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[6]}
-                      data-index={index}
-                      data-restindex={6}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[7]}
-                      data-index={index}
-                      data-restindex={7}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[8]}
-                      data-index={index}
-                      data-restindex={8}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                  <div>
-                    <TextInput
-                      value={exercise.rest[9]}
-                      data-index={index}
-                      data-restindex={9}
-                      onChange={onChanged}
-                    ></TextInput>
-                  </div>
-                </Grid>
+                            <div>
+                              <Flex
+                                flexDirection={"column"}
+                                justifyContent={"center"}
+                              >
+                                <Paragraph
+                                  style={{
+                                    marginTop: "10px",
+                                    textAlign: "right",
+                                  }}
+                                >
+                                  Rest
+                                </Paragraph>
+                              </Flex>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[0]}
+                                data-index={index}
+                                data-restindex={0}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[1]}
+                                data-index={index}
+                                data-restindex={1}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[2]}
+                                data-index={index}
+                                data-restindex={2}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[3]}
+                                data-index={index}
+                                data-restindex={3}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[4]}
+                                data-index={index}
+                                data-restindex={4}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[5]}
+                                data-index={index}
+                                data-restindex={5}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[6]}
+                                data-index={index}
+                                data-restindex={6}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[7]}
+                                data-index={index}
+                                data-restindex={7}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[8]}
+                                data-index={index}
+                                data-restindex={8}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                            <div>
+                              <TextInput
+                                value={exercise.rest[9]}
+                                data-index={index}
+                                data-restindex={9}
+                                onChange={onChanged}
+                              ></TextInput>
+                            </div>
+                          </Grid>
 
-                <Grid columns={2}>
-                  <div>
-                    <FormLabel>Intensity</FormLabel>
-                    <Select
-                      value={exercise.intensity}
-                      onChange={onIntensityChanged}
-                      data-index={index}
-                    >
-                      <Option value="1">1</Option>
-                      <Option value="2">2</Option>
-                      <Option value="3">3</Option>
-                      <Option value="4">4</Option>
-                      <Option value="5">5</Option>
-                    </Select>
-                  </div>
+                          <Grid columns={2}>
+                            <div>
+                              <FormLabel>Intensity</FormLabel>
+                              <Select
+                                value={exercise.intensity}
+                                onChange={onIntensityChanged}
+                                data-index={index}
+                              >
+                                <Option value="1">1</Option>
+                                <Option value="2">2</Option>
+                                <Option value="3">3</Option>
+                                <Option value="4">4</Option>
+                                <Option value="5">5</Option>
+                              </Select>
+                            </div>
 
-                  <div>
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <div>
-                        <FormLabel>Notes</FormLabel>
-                      </div>
-                      <textarea
-                        className="Textarea__Textarea__textarea___30c64 a11y__focus-border--default___60AXp"
-                        value={exercise.note}
-                        data-index={index}
-                        onChange={onNoteChanged}
-                        placeholder="Notes"
-                      />
-                    </div>
+                            <div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                }}
+                              >
+                                <div>
+                                  <FormLabel>Notes</FormLabel>
+                                </div>
+                                <textarea
+                                  className="Textarea__Textarea__textarea___30c64 a11y__focus-border--default___60AXp"
+                                  value={exercise.note}
+                                  data-index={index}
+                                  onChange={onNoteChanged}
+                                  placeholder="Notes"
+                                />
+                              </div>
 
-                    {/* <FormLabel>Notes</FormLabel>
+                              {/* <FormLabel>Notes</FormLabel>
                     <TextInput
                       value={exercise.note}
                       data-index={index}
                       onChange={onNoteChanged}
                     ></TextInput> */}
-                  </div>
-                </Grid>
+                            </div>
+                          </Grid>
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
               </div>
-            );
-          }
-        })}
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
       <div style={{ marginTop: "10px", marginBottom: "10px" }}>
         <Button icon="Plus" buttonType="naked" onClick={onAddButtonClicked}>
